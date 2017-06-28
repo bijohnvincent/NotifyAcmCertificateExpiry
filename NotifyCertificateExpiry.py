@@ -1,8 +1,9 @@
 # Name          : notifyCertificateExpiry
 # Author        : Bijohn Vincent
 # Functionality : This function is for notifying when a certificate imported in ACM is about to expire
+# Tested and working fine on: AWS Lambda with python 3.6 + boto3
 
-#
+#Import modules
 import boto3, datetime
 
 ########################### Add your SNS ARN ################################
@@ -10,7 +11,7 @@ SnsTopicArn = "SNS ARN"
 #############################################################################
 
 # Enter number of days before you need notification about certificate expiry.
-notifyIfExpiresAfter = 50
+notifyIfExpiresAfter = 40
 
 # Set 'True' Only if you need notification on everytime this function runs. 
 # If false function will notify only when your certificate is about to expire
