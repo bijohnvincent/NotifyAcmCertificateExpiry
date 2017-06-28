@@ -6,6 +6,8 @@ Compared to AWS Config notification, this won't fill your email inbox with notif
 You may add a higher value as certificate expiry threshold and trigger the AWS Lambda function weekly using AWS CloudWatch Rules, so that you get notification earlier and will not spam your inbox.
 Example Cron expression for CloudWatch event: 00 06 ? * MON *
 
+Tested and working fine on: AWS Lambda with python 3.6 + boto3
+
 ## IAM policy for role
 Add following policies to the IAM role to which you have attached to the Lambda in addition to the basic execution policy.
 
