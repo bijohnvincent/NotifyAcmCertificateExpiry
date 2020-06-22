@@ -1,7 +1,7 @@
 # Name          : notifyCertificateExpiry
 # Author        : github.com/bijohnvincent
 # Functionality : This function is for notifying when a certificate imported in ACM is about to expire
-# Tested and working fine on: AWS Lambda with python 3.6 + boto3
+# Tested and working fine on: AWS Lambda with python 3.7 + boto3
 
 #
 #from botocore.vendored import requests
