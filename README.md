@@ -7,6 +7,14 @@ Optionally you can add a Slack notification (using Slack webhook)
 You may add a higher value as certificate expiry threshold and trigger the AWS Lambda function weekly using AWS CloudWatch Rules, so that you get notification earlier and will not spam your inbox.
 Example Cron expression for CloudWatch event: 00 06 ? * MON *
 
+Set following Lambda environment variables
+* SlackWebhookUrl  (Note: Encrypt this environment variable)
+* SnsTopicArn
+* notifyEveryTime
+* notifyIfExpiresAfter
+
+![NotifyAcmCertificateExpiry](https://github.com/bijohnvincent/NotifyAcmCertificateExpiry/blob/master/image.png)
+
 Tested and working fine on: AWS Lambda with python 3.7 + boto3
 
 ## IAM policy for role
