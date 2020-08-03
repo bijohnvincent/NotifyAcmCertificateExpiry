@@ -1,7 +1,7 @@
 # Name          : notifyCertificateExpiry
 # Author        : github.com/bijohnvincent
-# Functionality : This function is for notifying when a certificate imported in ACM is about to expire
-# Tested and working fine on: AWS Lambda with python 3.7 + boto3
+# Functionality : This function is for notifying when a certificate in ACM is about to expire
+# Tested and working fine on: AWS Lambda with python 3.6 + boto3
 
 #
 #from botocore.vendored import requests
@@ -32,25 +32,30 @@ def lambda_handler(event, context):
     for certificate in certificateList:
         certificateDetails = acmClient.describe_certificate(CertificateArn=certificate["CertificateArn"])["Certificate"]
         #print (certificateDetails)
-        certificateExpiresIn = certificateDetails['NotAfter'].replace(tzinfo=None) - now
-
-        if certificateExpiresIn <= datetime.timedelta(days = notifyIfExpiresAfter):
-            message += "\nCertificate with SAN " +repr(certificateDetails['SubjectAlternativeNames']) + \
-            " expires in " + repr(certificateExpiresIn.days) + " days"
+        
+        if 'NotAfter' in certificateDetails:
+            certificateExpiresIn = certificateDetails['NotAfter'].replace(tzinfo=None) - now
             
-            notify = True
-        else:
-            if notifyEveryTime:
+            if certificateExpiresIn <= datetime.timedelta(days = notifyIfExpiresAfter):
                 message += "\nCertificate with SAN " +repr(certificateDetails['SubjectAlternativeNames']) + \
                 " expires in " + repr(certificateExpiresIn.days) + " days"
-            pass
+                
+                notify = True
+            else:
+                if notifyEveryTime:
+                    message += "\nCertificate with SAN " +repr(certificateDetails['SubjectAlternativeNames']) + \
+                    " expires in " + repr(certificateExpiresIn.days) + " days"
+                pass
+        else:
+            message += "\nCertificate with SAN " +repr(certificateDetails['SubjectAlternativeNames']) + \
+                " has status: " + certificateDetails['Status']
         
     # Set apt subject for the notification
     if notify:
         snsSubject = 'Alert: Certificates Expiring Soon'
     else:
         snsSubject = 'AWS Certificate Manager update'
-    
+
     # Send notification
     if notify or notifyEveryTime:
         # Send notification using SNS topic
@@ -64,7 +69,7 @@ def lambda_handler(event, context):
             
         # If Slack web hook URL varible is provided, send notification to slack channel
         if os.environ['SlackWebhookUrl']:
-            print ("send Slack notification")
+            #print ("send Slack notification")
             slack_data = {'text': message}
             EncryptedSlackWebHookUrl = os.environ['SlackWebhookUrl']
             DecryptedSlackWebHookUrl = boto3.client('kms').decrypt(CiphertextBlob=b64decode(EncryptedSlackWebHookUrl))['Plaintext'].decode('utf-8')
